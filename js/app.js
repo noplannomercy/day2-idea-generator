@@ -134,6 +134,43 @@ function handleGenerate() {
 }
 
 // ===================
+// COPY TO CLIPBOARD
+// ===================
+async function handleCopy() {
+    if (!currentIdea) {
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(currentIdea);
+        showCopyConfirmation();
+    } catch (e) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = currentIdea;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showCopyConfirmation();
+    }
+}
+
+function showCopyConfirmation() {
+    const copyBtn = document.getElementById('copy-btn');
+    if (!copyBtn) return;
+
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.classList.add('bg-green-100', 'text-green-700', 'border-green-300');
+
+    setTimeout(() => {
+        copyBtn.textContent = originalText;
+        copyBtn.classList.remove('bg-green-100', 'text-green-700', 'border-green-300');
+    }, 1500);
+}
+
+// ===================
 // FAVORITES UI
 // ===================
 function handleSave() {
@@ -238,6 +275,12 @@ function initApp() {
         saveBtn.addEventListener('click', handleSave);
     }
 
+    // Set up copy button
+    const copyBtn = document.getElementById('copy-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', handleCopy);
+    }
+
     // Initialize UI state
     updateTabStyles();
     updateCategoryBadge();
@@ -256,5 +299,6 @@ if (typeof window !== 'undefined') {
     window.handleGenerate = handleGenerate;
     window.handleSave = handleSave;
     window.handleRemoveFavorite = handleRemoveFavorite;
+    window.handleCopy = handleCopy;
     window.renderFavorites = renderFavorites;
 }
