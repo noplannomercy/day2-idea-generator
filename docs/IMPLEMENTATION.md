@@ -28,7 +28,7 @@
 
 ---
 
-## Phase 2: Core Logic (10 min)
+## Phase 2: Core Logic (10 min) ✅ COMPLETED
 
 ### TDD Step 1: Write Tests FIRST
 ```javascript
@@ -51,22 +51,22 @@ for (let i = 0; i < 10; i++) {
 ```
 
 ### TDD Step 2: Run Tests - Confirm FAIL
-- [ ] Run tests in console - all should fail (functions don't exist)
+- [x] Run tests in console - all should fail (functions don't exist)
 
 ### TDD Step 3: Implement
-- [ ] Create `ideas.js` with 4 category arrays (20+ each)
-- [ ] Implement `getRandomIdea(category)` function
-- [ ] Track last idea per category to prevent repeats
+- [x] Create `ideas.js` with 4 category arrays (20+ each)
+- [x] Implement `getRandomIdea(category)` function
+- [x] Track last idea per category to prevent repeats
 
 ### TDD Step 4: Verify Tests PASS
-- [ ] Run tests again - all should pass
+- [x] Run tests again - all should pass
 
 ### Test: Phase 2 Verification
-- [ ] `ideas.writing.length >= 20`
-- [ ] `ideas.drawing.length >= 20`
-- [ ] `ideas.business.length >= 20`
-- [ ] `ideas.coding.length >= 20`
-- [ ] Generate 10 times - no immediate repeats
+- [x] `ideas.writing.length >= 20`
+- [x] `ideas.drawing.length >= 20`
+- [x] `ideas.business.length >= 20`
+- [x] `ideas.coding.length >= 20`
+- [x] Generate 10 times - no immediate repeats
 
 ---
 
@@ -216,7 +216,7 @@ day2-idea-generator/
 ├── index.html          # [x] Created (Phase 1)
 ├── js/
 │   ├── app.js          # [x] Created (empty placeholder)
-│   ├── ideas.js        # [ ] Created (80+ ideas)
+│   ├── ideas.js        # [x] Created (80 ideas + tests)
 │   └── storage.js      # [ ] Created
 └── docs/
     ├── PRD.md          # [x] Exists
