@@ -95,11 +95,11 @@ function updateTabStyles() {
     tabs.forEach(tab => {
         const tabCategory = tab.dataset.category;
         if (tabCategory === currentCategory) {
-            tab.classList.remove('bg-white', 'text-gray-700', 'hover:bg-indigo-100');
-            tab.classList.add('bg-indigo-600', 'text-white');
+            tab.classList.remove('border-slate-700', 'text-slate-400');
+            tab.classList.add('bg-primary/20', 'border-primary', 'text-white', 'neon-border');
         } else {
-            tab.classList.remove('bg-indigo-600', 'text-white');
-            tab.classList.add('bg-white', 'text-gray-700', 'hover:bg-indigo-100');
+            tab.classList.remove('bg-primary/20', 'border-primary', 'text-white', 'neon-border');
+            tab.classList.add('border-slate-700', 'text-slate-400');
         }
     });
 }
@@ -160,13 +160,15 @@ function showCopyConfirmation() {
     const copyBtn = document.getElementById('copy-btn');
     if (!copyBtn) return;
 
-    const originalText = copyBtn.textContent;
-    copyBtn.textContent = 'Copied!';
-    copyBtn.classList.add('bg-green-100', 'text-green-700', 'border-green-300');
+    const originalHTML = copyBtn.innerHTML;
+    copyBtn.innerHTML = '<span class="material-symbols-outlined text-base align-middle mr-1">check</span>Copied!';
+    copyBtn.classList.remove('bg-white/10', 'text-slate-400', 'border-slate-700');
+    copyBtn.classList.add('bg-green-500/20', 'text-green-400', 'border-green-500');
 
     setTimeout(() => {
-        copyBtn.textContent = originalText;
-        copyBtn.classList.remove('bg-green-100', 'text-green-700', 'border-green-300');
+        copyBtn.innerHTML = originalHTML;
+        copyBtn.classList.remove('bg-green-500/20', 'text-green-400', 'border-green-500');
+        copyBtn.classList.add('bg-white/10', 'text-slate-400', 'border-slate-700');
     }, 1500);
 }
 
@@ -201,13 +203,15 @@ function showSaveConfirmation() {
     const saveBtn = document.getElementById('save-btn');
     if (!saveBtn) return;
 
-    const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Saved!';
-    saveBtn.classList.add('bg-green-100', 'text-green-700', 'border-green-300');
+    const originalHTML = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined text-base align-middle mr-1">check</span>Saved!';
+    saveBtn.classList.remove('bg-white/10', 'border-slate-700');
+    saveBtn.classList.add('bg-green-500/20', 'text-green-400', 'border-green-500');
 
     setTimeout(() => {
-        saveBtn.textContent = originalText;
-        saveBtn.classList.remove('bg-green-100', 'text-green-700', 'border-green-300');
+        saveBtn.innerHTML = originalHTML;
+        saveBtn.classList.remove('bg-green-500/20', 'text-green-400', 'border-green-500');
+        saveBtn.classList.add('bg-white/10', 'border-slate-700');
     }, 1500);
 }
 
@@ -219,32 +223,68 @@ function renderFavorites() {
 
     if (favorites.length === 0) {
         favoritesList.innerHTML = `
-            <li id="empty-favorites" class="text-gray-400 text-center py-4">
+            <div id="empty-favorites" class="col-span-full text-slate-500 text-center py-12 text-sm uppercase tracking-wider">
                 No favorites yet. Save some ideas!
-            </li>
+            </div>
         `;
         return;
     }
 
-    favoritesList.innerHTML = favorites.map(fav => `
-        <li class="flex items-start justify-between gap-3 p-3 bg-gray-50 rounded-lg">
-            <div class="flex-1">
-                <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-100 text-indigo-700 mb-1">
-                    ${fav.category.charAt(0).toUpperCase() + fav.category.slice(1)}
-                </span>
-                <p class="text-gray-700 text-sm">${fav.text}</p>
+    // Category color mapping
+    const categoryColors = {
+        writing: 'text-purple-400',
+        drawing: 'text-cyan-400',
+        business: 'text-orange-400',
+        coding: 'text-pink-400'
+    };
+
+    favoritesList.innerHTML = favorites.map(fav => {
+        const categoryColor = categoryColors[fav.category] || 'text-primary';
+        const date = new Date(fav.timestamp);
+        const timeString = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        return `
+            <div class="bg-card-dark border border-slate-800 rounded-lg p-5 transition-all duration-300 hover:border-primary/50 group">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.3em] ${categoryColor}">
+                        ${fav.category}
+                    </span>
+                    <button
+                        onclick="handleRemoveFavorite(${fav.id})"
+                        class="text-slate-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                        aria-label="Remove favorite"
+                    >
+                        <span class="material-symbols-outlined text-base">delete</span>
+                    </button>
+                </div>
+                <p class="text-sm text-slate-200 mb-3 leading-relaxed">${fav.text}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">${timeString}</span>
+                    <button
+                        onclick="copyFavoriteToClipboard('${fav.text.replace(/'/g, "\\'")}')"
+                        class="text-slate-500 hover:text-primary transition-colors"
+                        aria-label="Copy to clipboard"
+                    >
+                        <span class="material-symbols-outlined text-base">content_copy</span>
+                    </button>
+                </div>
             </div>
-            <button
-                onclick="handleRemoveFavorite(${fav.id})"
-                class="text-gray-400 hover:text-red-500 transition-colors p-1"
-                aria-label="Remove favorite"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </li>
-    `).join('');
+        `;
+    }).join('');
+}
+
+// Helper function for copying favorite to clipboard
+async function copyFavoriteToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
 }
 
 function initApp() {
@@ -301,4 +341,5 @@ if (typeof window !== 'undefined') {
     window.handleRemoveFavorite = handleRemoveFavorite;
     window.handleCopy = handleCopy;
     window.renderFavorites = renderFavorites;
+    window.copyFavoriteToClipboard = copyFavoriteToClipboard;
 }
